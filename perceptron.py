@@ -208,13 +208,15 @@ class Perceptron:
         maxGetExit1 = 0
         number_i = 0
         step2 = []
+        
+        if (len(desk2[0]) == 0):
+            pass
 
         for i in desk2:
             allGetExit.append(self.GetExit(i))
             
         for i in desk2:
             step2.append(self.step(self.prepareDvumerium(i), count + 1))
-            print(len(step2))
 
         for i in step2:
             hren = []
@@ -224,7 +226,6 @@ class Perceptron:
 
         for k in allGetExit2:
             if (len(k) == 0):
-                print('-------------------------')
                 for j in step2:
                     print(self.prepareData(j))
 

@@ -1,15 +1,14 @@
 from perceptron import *
+import random as rnd
 
 class Population:
     def __init__(self):
-        self.size = 30
+        self.size = 10
         self.half_size = int(self.size/2)
-        self.mutate = 0.05
+        self.mutate = 0.02
         self.person = []
         self.num_sloy = 3
         self.count = 1
-        self.white = Perceptron()
-        self.black = Perceptron()
         self.victory_combined = [
 		    [0, 4, 8],
 		    [2, 4, 6],
@@ -58,55 +57,36 @@ class Population:
         victory = False
 
         while not victory:
-            
-            if (self.count > 200):
-                break           
+            try:   
+                if (self.count > 200):                  
+                    break           
 
-            step = white.step(desk, self.count)
-            desk = white.makePredicted(step, self.count)
-            desk = white.prepareDvumerium(desk)
+                step = white.step(desk, self.count)
 
-            self.count += 1
+                if (self.checkWin(step)):
+                    white.score += 1
+                    black.score -= 2
+                    break
 
-            for w in desk:
-                print(w)
-            print('#################') 
+                desk = white.makePredicted(step, self.count)
+                desk = white.prepareDvumerium(desk)
 
-            step = black.step(desk, self.count)
-            desk = black.makePredicted(step, self.count)
-            desk = black.prepareDvumerium(desk)
+                self.count += 1
 
-            self.count += 1
+                step = black.step(desk, self.count)
 
-            for w in desk:
-                print(w)
-            print('#################')             
+                if (self.checkWin(step)):
+                    white.score += 1
+                    black.score -= 2
+                    break
 
-            # desk = white.step(desk, self.count)
+                desk = black.makePredicted(step, self.count)
+                desk = black.prepareDvumerium(desk)
 
-            # print(desk)
-
-            # self.count += 1
-            # victory = self.checkWin(desk)
-            # for w in desk:
-            #     print(w)
-            # if (victory):
-            #     break
-
-            # print('#################') 
-
-            # desk = black.step(desk, self.count)
-
-            # for w in desk:
-            #     print(w)
-
-            # self.count += 1
-            # victory = self.checkWin(desk)
-            # print('#################')    
-
-            
-
-
+                self.count += 1
+            except:
+                break
+   
     def Selection(self):
         temp_person = []
 
@@ -114,7 +94,10 @@ class Population:
             i.score = 0.0
 
         for i in range(self.size):
-            for j in range(i+1, self.size):
+            for j in range(5):
+                rand = int(random.uniform(0, self.size))
+                while (i == rand):
+                    rand = int(random.uniform(0, self.size))
                 self.Game(self.person[i], self.person[j])
 
         for i in self.person:
@@ -130,7 +113,6 @@ class Population:
 
         return score_person
 
-        
     def Reproduction(self):
         for i in range(self.half_size):
             parent1 = int(random.uniform(0, self.half_size))
@@ -144,6 +126,4 @@ class Population:
     def Mutate(self):
         for i in self.person:
             i.Mutating(self.mutate)
-        
-
         
