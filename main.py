@@ -8,17 +8,18 @@ education = int(input('Обучать - 1, не обучать - 0: '))
 if (education):
     population = Population ()
 
-    evolution = 1000
+    evolution = 50
 
     for i in range(evolution):
+        print(i)
         count = population.Selection()
         population.Reproduction()
         population.Mutate()
-        if i % 10 == 0:
+        if i % 5 == 0:
             data = population.person
 
             winner:Perceptron
-            max = 0
+            max = -1000
 
             for w in data:
                 if (w.score >= max):
@@ -37,7 +38,7 @@ if (education):
     data = population.person
 
     winner:Perceptron
-    max = 0
+    max = -1000
 
     for i in data:
         if (i.score > max):

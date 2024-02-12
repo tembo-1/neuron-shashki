@@ -110,23 +110,23 @@ class Perceptron:
     def checkBlackFood(self, desk, i, j):  
         desk1 = copy.deepcopy(desk)
 
-        if (j < 6 and i > 1 and (desk1[i - 1][j + 1] == 1 or desk1[i - 1][j + 1] == 2) and desk1[i - 2][j + 2] == 0 and desk1[i][j] == -1):
+        if (j < 6 and i > 1 and (desk1[i - 1][j + 1] == -1 or desk1[i - 1][j + 1] == -2) and desk1[i - 2][j + 2] == 0 and desk1[i][j] == 1):
             desk1[i][j] = 0
             desk1[i - 1][j + 1] = 0
-            desk1[i - 2][j + 2] = -1
+            desk1[i - 2][j + 2] = 1
 
             if (i == 2):
-                desk1[i - 2][j + 2] = -2             
+                desk1[i - 2][j + 2] = 2             
                 
             desk1 = self.checkBlackFood(desk1, i - 2, j + 2)
 
-        if (j > 1 and i > 1 and (desk1[i - 1][j - 1] == 1 or desk1[i - 1][j - 1] == 2) and desk1[i - 2][j - 2] == 0 and desk1[i][j] == -1):
+        if (j > 1 and i > 1 and (desk1[i - 1][j - 1] == -1 or desk1[i - 1][j - 1] == -2) and desk1[i - 2][j - 2] == 0 and desk1[i][j] == 1):
             desk1[i][j] = 0
             desk1[i - 1][j - 1] = 0
-            desk1[i - 2][j - 2] = -1 
+            desk1[i - 2][j - 2] = 1 
 
             if (i == 2):
-                desk1[i - 2][j - 2] = -2              
+                desk1[i - 2][j - 2] = 2              
             
             desk1 = self.checkBlackFood(desk1, i - 2, j - 2)
 
@@ -135,31 +135,31 @@ class Perceptron:
     def checkBlackFoodQueen(self, desk, i, j):
         desk1 = copy.deepcopy(desk)
 
-        if (j < 6 and i > 1 and (desk1[i - 1][j + 1] == 1 or desk1[i - 1][j + 1] == 2) and desk1[i - 2][j + 2] == 0 and desk1[i][j] == -2):
+        if (j < 6 and i > 1 and (desk1[i - 1][j + 1] == -1 or desk1[i - 1][j + 1] == -2) and desk1[i - 2][j + 2] == 0 and desk1[i][j] == 2):
             desk1[i][j] = 0
             desk1[i - 1][j + 1] = 0
-            desk1[i - 2][j + 2] = -2            
+            desk1[i - 2][j + 2] = 2            
                 
             desk1 = self.checkBlackFoodQueen(desk1, i - 2, j + 2)
 
-        if (j > 1 and i > 1 and (desk1[i - 1][j - 1] == 1 or desk1[i - 1][j - 1] == 2) and desk1[i - 2][j - 2] == 0 and desk1[i][j] == -2):
+        if (j > 1 and i > 1 and (desk1[i - 1][j - 1] == -1 or desk1[i - 1][j - 1] == -2) and desk1[i - 2][j - 2] == 0 and desk1[i][j] == 2):
             desk1[i][j] = 0
             desk1[i - 1][j - 1] = 0
-            desk1[i - 2][j - 2] = -2              
+            desk1[i - 2][j - 2] = 2              
             
             desk1 = self.checkBlackFoodQueen(desk1, i - 2, j - 2)
 
-        if (j < 6 and i < 6 and (desk1[i + 1][j + 1] == 1 or desk1[i + 1][j + 1] == 2) and desk1[i + 2][j + 2] == 0 and desk1[i][j] == -2):
+        if (j < 6 and i < 6 and (desk1[i + 1][j + 1] == -1 or desk1[i + 1][j + 1] == -2) and desk1[i + 2][j + 2] == 0 and desk1[i][j] == 2):
             desk1[i][j] = 0
             desk1[i + 1][j + 1] = 0
-            desk1[i + 2][j + 2] = -2
+            desk1[i + 2][j + 2] = 2
             
             desk1 = self.checkBlackFoodQueen(desk1, i + 2, j + 2)
 
-        if (j > 1 and i < 6 and (desk1[i + 1][j - 1] == 1 or desk1[i + 1][j - 1] == 2) and desk1[i + 2][j - 2] == 0 and desk1[i][j] == -2):
+        if (j > 1 and i < 6 and (desk1[i + 1][j - 1] == -1 or desk1[i + 1][j - 1] == -2) and desk1[i + 2][j - 2] == 0 and desk1[i][j] == 2):
             desk1[i][j] = 0
             desk1[i + 1][j - 1] = 0
-            desk1[i + 2][j - 2] = -2         
+            desk1[i + 2][j - 2] = 2         
            
             desk1 = self.checkBlackFoodQueen(desk1, i + 2, j - 2)
 
@@ -201,42 +201,137 @@ class Perceptron:
     def prepareDvumerium(self, desk):
         return [desk[i:i+8] for i in range(0, len(desk), 8)]
 
-    def makePredicted(self, desk2, count):
-        allGetExit = []
-        allGetExit2 = []
-        maxGetExit2 = []
-        maxGetExit1 = 0
-        number_i = 0
-        step2 = []
-        
-        if (len(desk2[0]) == 0):
-            pass
+    def estimation(self, desk2, flag):
+        hren = []
 
         for i in desk2:
-            allGetExit.append(self.GetExit(i))
-            
-        for i in desk2:
-            step2.append(self.step(self.prepareDvumerium(i), count + 1))
+            hren.append(self.GetExit([-x for x in i]))
+
+        if (flag):
+            return desk2[hren.index(max(hren))]  
+
+        return desk2[hren.index(min(hren))]           
+
+    def stepIntoFour(self, desk2, count):
+        steps = []
+        hren = []
+        
+        step2 = self.step(self.prepareDvumerium([-x for x in desk2]), count + 3)
+
+        steps.append(self.estimation(i, 0))
+
+        for i in steps:
+            hren.append(self.GetExit([-x for x in i]))
+
+        return step2[hren.index(min(hren))]
+
+    def stepIntoThree(self, desk2, count):
+        steps = []
+        hren = []
+        
+        step2 = self.step(self.prepareDvumerium([-x for x in desk2]), count + 2)
 
         for i in step2:
-            hren = []
-            for j in i:
-                hren.append(self.GetExit(j))
-            allGetExit2.append(hren)
+            steps.append(self.stepIntoFour(i, count))
 
-        for k in allGetExit2:
-            if (len(k) == 0):
-                for j in step2:
-                    print(self.prepareData(j))
+        for i in steps:
+            hren.append(self.GetExit([-x for x in i]))
 
-            maxGetExit2.append(max(k))
+        return step2[hren.index(max(hren))]
 
-        for i in range(len(allGetExit)):
-            if (allGetExit[i] - maxGetExit2[i] > maxGetExit1):
-                maxGetExit1 = allGetExit[i] - maxGetExit2[i]
-                number_i = i
+    def stepIntoTwo(self, desk2, count):
+        steps = []
+        hren = []
+        
+        step2 = self.step(self.prepareDvumerium([-x for x in desk2]), count + 1)
 
-        return desk2[number_i]
+        for i in step2:
+            steps.append(self.stepIntoThree(i, count))
+
+        for i in steps:
+            hren.append(self.GetExit([-x for x in i]))
+
+        return step2[hren.index(min(hren))]
+
+    def checkWin(self, desk):
+        minus_one_found = True
+        one_found = True
+        for row in desk:
+            for elem in row:
+                if elem == -1 or elem == -2:
+                    minus_one_found = False
+                if elem == 1 or elem == 2:
+                    one_found = False
+
+        return minus_one_found ^ one_found
+
+    def makePredicted(self, desk2, count, de = []):
+        allGetExit = []
+        allGetExit2 = []
+        allGetExit3 = []
+        maxGetExit2 = []
+        maxGetExit3 = []
+        maxGetExit1 = -10000
+        number_i = 0
+        step2 = []
+        step3 = []
+        try:
+
+            for i in desk2:
+                allGetExit.append(self.GetExit(i))
+
+            for i in desk2:
+                step = self.step(self.prepareDvumerium([-x for x in i]), count + 1)  
+                if (not step):
+                    step2.append([[0] * 64])
+                else:    
+                    step2.append(step)
+
+            for i in step2:
+                hren = []
+                for j in i:
+                    if (all(element == 0 for element in j)):
+                        hren.append(0)
+                    else:                        
+                        hren.append(self.GetExit(j))
+                allGetExit2.append(hren)
+
+            for k in allGetExit2:
+                maxGetExit2.append(max(k))
+
+            for i in step2:
+                temp = []
+                for j in i:
+                    try:
+                        step = self.step(self.prepareDvumerium([-x for x in j]), count + 2)
+                    except:
+                        return 1
+                    if (not step):
+                        temp.append([0] * 64)
+                    else:    
+                        temp.extend(step)
+                step3.append(temp) 
+
+            for i in step3:
+                hren = []
+                for j in i:
+                    if (all(element == 0 for element in j)):
+                        hren.append(0)
+                    else:    
+                        hren.append(self.GetExit(j))
+                allGetExit3.append(hren)
+
+            for k in allGetExit3:
+                maxGetExit3.append(max(k))    
+
+            for i in range(len(allGetExit)):
+                if (maxGetExit3[i] > maxGetExit1):
+                    maxGetExit1 = maxGetExit3[i]
+                    number_i = i
+
+            return desk2[number_i]
+        except:
+            return 1;   
 
 
     def step(self, desk, count):
@@ -254,23 +349,28 @@ class Perceptron:
                             if (desk_temp1 != desk_temp):
                                 max_desk = []
                                 max_desk.append(self.prepareData(desk_temp1))
+                                
                                 return max_desk
 
-                            if (j < 7 and i < 7 and desk_temp[i + 1][j + 1] == 0 and desk_temp[i][j] == 1):
+                            if (j < 7 and i < 7 and desk[i + 1][j + 1] == 0 and desk[i][j] == 1):
                                 desk_temp[i][j] = 0
                                 desk_temp[i + 1][j + 1] = 1
 
                                 if (i == 6):
                                     desk_temp[i + 1][j + 1] = 2 
-                                max_desk.append(self.prepareData(desk_temp))    
+                                
+                                max_desk.append(self.prepareData(desk_temp))   
+                                desk_temp = copy.deepcopy(desk)
 
-                            if (j > 0 and i < 7 and desk_temp[i + 1][j - 1] == 0 and desk_temp[i][j] == 1):
+                            if (j > 0 and i < 7 and desk[i + 1][j - 1] == 0 and desk[i][j] == 1):
                                 desk_temp[i][j] = 0
                                 desk_temp[i + 1][j - 1] = 1
 
                                 if (i == 6):
                                     desk_temp[i + 1][j - 1] = 2
-                                max_desk.append(self.prepareData(desk_temp))     
+                                  
+                                max_desk.append(self.prepareData(desk_temp))  
+                                desk_temp = copy.deepcopy(desk)   
 
                         except:
                             continue
@@ -283,32 +383,34 @@ class Perceptron:
                                 max_desk.append(self.prepareData(desk_temp1))
                                 return max_desk
 
-                            if (j < 7 and i < 7 and desk_temp[i + 1][j + 1] == 0 and desk_temp[i][j] == 2):
+                            if (j < 7 and i < 7 and desk[i + 1][j + 1] == 0 and desk[i][j] == 2):
                                 desk_temp[i][j] = 0
                                 desk_temp[i + 1][j + 1] = 2 
                                 max_desk.append(self.prepareData(desk_temp)) 
+                                desk_temp = copy.deepcopy(desk)  
 
-                            if (j > 0 and i < 7 and desk_temp[i + 1][j - 1] == 0 and desk_temp[i][j] == 2):
+                            if (j > 0 and i < 7 and desk[i + 1][j - 1] == 0 and desk[i][j] == 2):
                                 desk_temp[i][j] = 0
                                 desk_temp[i + 1][j - 1] = 2
                                 max_desk.append(self.prepareData(desk_temp)) 
+                                desk_temp = copy.deepcopy(desk)  
 
-                            if (j < 7 and i > 0 and desk_temp[i - 1][j + 1] == 0 and desk_temp[i][j] == 2):
+                            if (j < 7 and i > 0 and desk[i - 1][j + 1] == 0 and desk[i][j] == 2):
                                 desk_temp[i][j] = 0
                                 desk_temp[i - 1][j + 1] = 2
                                 max_desk.append(self.prepareData(desk_temp))
+                                desk_temp = copy.deepcopy(desk)  
 
-                            if (j > 0 and i > 0 and desk_temp[i - 1][j - 1] == 0 and desk_temp[i][j] == 2):
+                            if (j > 0 and i > 0 and desk[i - 1][j - 1] == 0 and desk[i][j] == 2):
                                 desk_temp[i][j] = 0
                                 desk_temp[i - 1][j - 1] = 2                                 
                                 max_desk.append(self.prepareData(desk_temp))
+                                desk_temp = copy.deepcopy(desk)  
 
                         except:
-                            continue 
-
-                                                
+                            continue                             
                 else:        
-                    if (desk_temp[i][j] == -1):
+                    if (desk_temp[i][j] == 1):
                         try:
                             desk_temp1 = self.checkBlackFood(desk_temp, i, j)
 
@@ -317,26 +419,28 @@ class Perceptron:
                                 max_desk.append(self.prepareData(desk_temp1))
                                 return max_desk
 
-                            if (j < 7 and i > 0 and desk_temp[i - 1][j + 1] == 0 and desk_temp[i][j] == -1):
+                            if (j < 7 and i > 0 and desk[i - 1][j + 1] == 0 and desk[i][j] == 1):
                                 desk_temp[i][j] = 0
-                                desk_temp[i - 1][j + 1] = -1
+                                desk_temp[i - 1][j + 1] = 1
 
                                 if (i == 1):
-                                    desk_temp[i - 1][j + 1] = -2
+                                    desk_temp[i - 1][j + 1] = 2
                                 max_desk.append(self.prepareData(desk_temp))
+                                desk_temp = copy.deepcopy(desk)  
 
-                            if (j > 0 and i > 0 and desk_temp[i - 1][j - 1] == 0 and desk_temp[i][j] == -1):
+                            if (j > 0 and i > 0 and desk[i - 1][j - 1] == 0 and desk[i][j] == 1):
                                 desk_temp[i][j] = 0
-                                desk_temp[i - 1][j - 1] = -1
+                                desk_temp[i - 1][j - 1] = 1
 
                                 if (i == 1):
-                                    desk_temp[i - 1][j - 1] = -2
+                                    desk_temp[i - 1][j - 1] = 2
                                 max_desk.append(self.prepareData(desk_temp))
+                                desk_temp = copy.deepcopy(desk)  
 
                         except:
                             continue
 
-                    elif (desk_temp[i][j] == -2):
+                    elif (desk_temp[i][j] == 2):
                         try:
                             desk_temp1 = self.checkBlackFoodQueen(desk_temp, i, j)
 
@@ -345,31 +449,33 @@ class Perceptron:
                                 max_desk.append(self.prepareData(desk_temp1))
                                 return max_desk
 
-                            if (j < 7 and i < 7 and desk_temp[i + 1][j + 1] == 0 and desk_temp[i][j] == -2):
+                            if (j < 7 and i < 7 and desk[i + 1][j + 1] == 0 and desk[i][j] == 2):
                                 desk_temp[i][j] = 0
-                                desk_temp[i + 1][j + 1] = -2  
+                                desk_temp[i + 1][j + 1] = 2  
                                 max_desk.append(self.prepareData(desk_temp))                              
+                                desk_temp = copy.deepcopy(desk)  
 
-                            if (j > 0 and i < 7 and desk_temp[i + 1][j - 1] == 0 and desk_temp[i][j] == -2):
+                            if (j > 0 and i < 7 and desk[i + 1][j - 1] == 0 and desk[i][j] == 2):
                                 desk_temp[i][j] = 0
-                                desk_temp[i + 1][j - 1] = -2
-                                max_desk.append(self.prepareData(desk_temp))                               
+                                desk_temp[i + 1][j - 1] = 2
+                                max_desk.append(self.prepareData(desk_temp))       
+                                desk_temp = copy.deepcopy(desk)                          
 
-                            if (j < 7 and i > 0 and desk_temp[i - 1][j + 1] == 0 and desk_temp[i][j] == -2):
+                            if (j < 7 and i > 0 and desk[i - 1][j + 1] == 0 and desk[i][j] == 2):
                                 desk_temp[i][j] = 0
-                                desk_temp[i - 1][j + 1] = -2
-                                max_desk.append(self.prepareData(desk_temp))                               
+                                desk_temp[i - 1][j + 1] = 2
+                                max_desk.append(self.prepareData(desk_temp))     
+                                desk_temp = copy.deepcopy(desk)                            
 
-                            if (j > 0 and i > 0 and desk_temp[i - 1][j - 1] == 0 and desk_temp[i][j] == -2):
+                            if (j > 0 and i > 0 and desk[i - 1][j - 1] == 0 and desk[i][j] == 2):
                                 desk_temp[i][j] = 0
-                                desk_temp[i - 1][j - 1] = -2
-                                max_desk.append(self.prepareData(desk_temp))                                
+                                desk_temp[i - 1][j - 1] = 2
+                                max_desk.append(self.prepareData(desk_temp))  
+                                desk_temp = copy.deepcopy(desk)                                
                                   
-
                         except:
                             continue                         
 
-        if max_desk == [[]]:
-            pass
+
         return max_desk        
                        
