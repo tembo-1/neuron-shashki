@@ -8,7 +8,7 @@ education = int(input('Обучать - 1, не обучать - 0: '))
 if (education):
     population = Population ()
 
-    evolution = 50
+    evolution = 200
 
     for i in range(evolution):
         print(i)

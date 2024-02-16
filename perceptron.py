@@ -15,7 +15,7 @@ class Perceptron:
         self.new_gate = [
             [0.0] * self.num_gate,
             [0.0] * self.in_sloy[0],
-            [0.0] * self.in_sloy[1],
+            [0.0] * (self.in_sloy[1] + 64),
             [0.0] * self.in_sloy[2],
         ]
         self.sloy = []
@@ -44,16 +44,21 @@ class Perceptron:
         for g in range (len(gate)):
             self.new_gate[0][g] = gate[g]
 
-
         for i in range(self.num_sloy):
             for n in range(self.in_sloy[i]):
                 work = 0
                 for w in range( len(self.new_gate[i]) ):
-                    work += self.sloy[i][n].weight[w] * self.new_gate[i][w]
+                    if (i != self.num_sloy - 1):
+                        work += self.sloy[i][n].weight[w] * self.new_gate[i][w]
+                    else:
+                        end_gate = self.new_gate[i][:10] + gate
+
+                        work += self.sloy[i][n].weight[w] * end_gate[w]
+
                 if (i != self.num_sloy - 1):
-                    self.new_gate[i + 1][n] = 1 / (1 + math.exp( -betta * (work - self.sloy[i][n].porog) ))    
+                    self.new_gate[i + 1][n] = 1 / (1 + math.exp( - betta * (work - self.sloy[i][n].porog) ))    
                 else:
-                    result = 1 / (1 + math.exp( -betta * (work - self.sloy[i][n].porog) ))
+                    result = 1 / (1 + math.exp( - betta * (work - self.sloy[i][n].porog) ))
 
         return result
 
@@ -266,19 +271,15 @@ class Perceptron:
         return minus_one_found ^ one_found
 
     def makePredicted(self, desk2, count, de = []):
-        allGetExit = []
-        allGetExit2 = []
+        maxStepsTwo = []
+        maxStepsThree = []
         allGetExit3 = []
-        maxGetExit2 = []
-        maxGetExit3 = []
-        maxGetExit1 = -10000
-        number_i = 0
         step2 = []
         step3 = []
+        hre = []
         try:
-
-            for i in desk2:
-                allGetExit.append(self.GetExit(i))
+            for k in desk2:
+                hre.append(self.GetExit(k))
 
             for i in desk2:
                 step = self.step(self.prepareDvumerium([-x for x in i]), count + 1)  
@@ -294,44 +295,31 @@ class Perceptron:
                         hren.append(0)
                     else:                        
                         hren.append(self.GetExit(j))
-                allGetExit2.append(hren)
+                maxStepsTwo.append(i[hren.index(max(hren))])
 
-            for k in allGetExit2:
-                maxGetExit2.append(max(k))
-
-            for i in step2:
-                temp = []
-                for j in i:
-                    try:
-                        step = self.step(self.prepareDvumerium([-x for x in j]), count + 2)
-                    except:
-                        return 1
-                    if (not step):
-                        temp.append([0] * 64)
-                    else:    
-                        temp.extend(step)
-                step3.append(temp) 
+            for i in maxStepsTwo:
+                step = self.step(self.prepareDvumerium([-x for x in i]), count + 2)  
+                if (not step):
+                    step3.append([[0] * 64])
+                else:    
+                    step3.append(step)    
 
             for i in step3:
                 hren = []
                 for j in i:
                     if (all(element == 0 for element in j)):
-                        hren.append(0)
-                    else:    
+                        hren.append(1)
+                    else:                        
                         hren.append(self.GetExit(j))
-                allGetExit3.append(hren)
+                maxStepsThree.append(i[hren.index(max(hren))])                                
 
-            for k in allGetExit3:
-                maxGetExit3.append(max(k))    
+            for i in maxStepsThree:
+                allGetExit3.append(self.GetExit(i))
+            
+            return desk2[allGetExit3.index(max(allGetExit3))]
 
-            for i in range(len(allGetExit)):
-                if (maxGetExit3[i] > maxGetExit1):
-                    maxGetExit1 = maxGetExit3[i]
-                    number_i = i
-
-            return desk2[number_i]
         except:
-            return 1;   
+            return 1   
 
 
     def step(self, desk, count):

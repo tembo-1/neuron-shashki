@@ -50,7 +50,7 @@ class Population:
 
         while not victory:
             try:   
-                if (self.count > 65):                  
+                if (self.count > 70):                  
                     white.score -= 2
                     black.score -= 2       
                     break   
