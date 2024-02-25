@@ -38,7 +38,7 @@ class Perceptron:
                         self.sloy[i][j].weight = n['weight']              
 
     def GetExit(self, gate):
-        betta = 1
+        betta = 2
         result = 0
 
         for g in range (len(gate)):
@@ -88,175 +88,224 @@ class Perceptron:
                 desk.append(j)
         return desk
 
-    def checkWhiteFood(self, desk, i, j):
-        desk1 = copy.deepcopy(desk)
-        if (j < 6 and i < 6 and (desk1[i + 1][j + 1] == -1 or desk1[i + 1][j + 1] == -2) and desk1[i + 2][j + 2] == 0 and desk1[i][j] == 1):
-            desk1[i][j] = 0
-            desk1[i + 1][j + 1] = 0
-            desk1[i + 2][j + 2] = 1
+    def checkWhiteFood(self, desk, i, j, flag = False):
+        left = copy.deepcopy(desk)
+        right = copy.deepcopy(desk)
+        result = []
+
+        if (j < 6 and i < 6 and (left[i + 1][j + 1] == -1 or left[i + 1][j + 1] == -2) and left[i + 2][j + 2] == 0 and left[i][j] == 1):
+            left[i][j] = 0
+            left[i + 1][j + 1] = 0
+            left[i + 2][j + 2] = 1
 
             if (i == 5):
-                desk1[i + 2][j + 2] = 2
+                left[i + 2][j + 2] = 2
             
-            desk1 = self.checkWhiteFood(desk1, i + 2, j + 2)
+            nextLeftStep = self.checkWhiteFood(left, i + 2, j + 2, True)
+            if (nextLeftStep):
+                left = nextLeftStep
 
-        if (j > 1 and i < 6 and (desk1[i + 1][j - 1] == -1 or desk1[i + 1][j - 1] == -2) and desk1[i + 2][j - 2] == 0 and desk1[i][j] == 1):
-            desk1[i][j] = 0
-            desk1[i + 1][j - 1] = 0
-            desk1[i + 2][j - 2] = 1
+        if (j > 1 and i < 6 and (right[i + 1][j - 1] == -1 or right[i + 1][j - 1] == -2) and right[i + 2][j - 2] == 0 and right[i][j] == 1):
+            right[i][j] = 0
+            right[i + 1][j - 1] = 0
+            right[i + 2][j - 2] = 1
 
             if (i == 5):
-                desk1[i + 2][j - 2] = 2           
+                right[i + 2][j - 2] = 2           
            
-            desk1 = self.checkWhiteFood(desk1, i + 2, j - 2)
+            nextRightStep = self.checkWhiteFood(right, i + 2, j - 2, True)
+            if (nextRightStep):
+                right = nextRightStep           
 
-        return desk1  
+        if (right != desk and right):
+            if (flag):
+                result.extend(right)
+            else:
+                result.append(right)  
+        if (left != desk and left):
+            if (flag):
+                result.extend(left)
+            else:
+                result.append(left)
 
-    def checkBlackFood(self, desk, i, j):  
-        desk1 = copy.deepcopy(desk)
+        return result  
 
-        if (j < 6 and i > 1 and (desk1[i - 1][j + 1] == -1 or desk1[i - 1][j + 1] == -2) and desk1[i - 2][j + 2] == 0 and desk1[i][j] == 1):
-            desk1[i][j] = 0
-            desk1[i - 1][j + 1] = 0
-            desk1[i - 2][j + 2] = 1
+    def checkBlackFood(self, desk, i, j, flag = False):  
+        left = copy.deepcopy(desk)
+        right = copy.deepcopy(desk)
+        result = []
+
+        if (j < 6 and i > 1 and (right[i - 1][j + 1] == -1 or right[i - 1][j + 1] == -2) and right[i - 2][j + 2] == 0 and right[i][j] == 1):
+            right[i][j] = 0
+            right[i - 1][j + 1] = 0
+            right[i - 2][j + 2] = 1
 
             if (i == 2):
-                desk1[i - 2][j + 2] = 2             
+                right[i - 2][j + 2] = 2             
                 
-            desk1 = self.checkBlackFood(desk1, i - 2, j + 2)
+            nextRightStep = self.checkBlackFood(right, i - 2, j + 2, True)
+            if (nextRightStep):
+                right = nextRightStep
 
-        if (j > 1 and i > 1 and (desk1[i - 1][j - 1] == -1 or desk1[i - 1][j - 1] == -2) and desk1[i - 2][j - 2] == 0 and desk1[i][j] == 1):
-            desk1[i][j] = 0
-            desk1[i - 1][j - 1] = 0
-            desk1[i - 2][j - 2] = 1 
+        if (j > 1 and i > 1 and (left[i - 1][j - 1] == -1 or left[i - 1][j - 1] == -2) and left[i - 2][j - 2] == 0 and left[i][j] == 1):
+            left[i][j] = 0
+            left[i - 1][j - 1] = 0
+            left[i - 2][j - 2] = 1 
 
             if (i == 2):
-                desk1[i - 2][j - 2] = 2              
+                left[i - 2][j - 2] = 2              
             
-            desk1 = self.checkBlackFood(desk1, i - 2, j - 2)
+            nextLeftStep = self.checkBlackFood(left, i - 2, j - 2, True)
+            if (nextLeftStep):
+                left = nextLeftStep
 
-        return desk1   
+        if (right != desk and right):
+            if (flag):
+                result.extend(right)
+            else:
+                result.append(right)  
+        if (left != desk and left):
+            if (flag):
+                result.extend(left)
+            else:
+                result.append(left)
 
-    def checkBlackFoodQueen(self, desk, i, j):
-        desk1 = copy.deepcopy(desk)
+        return result   
 
-        if (j < 6 and i > 1 and (desk1[i - 1][j + 1] == -1 or desk1[i - 1][j + 1] == -2) and desk1[i - 2][j + 2] == 0 and desk1[i][j] == 2):
-            desk1[i][j] = 0
-            desk1[i - 1][j + 1] = 0
-            desk1[i - 2][j + 2] = 2            
+    def checkBlackFoodQueen(self, desk, i, j, flag = False):
+        top_left = copy.deepcopy(desk)
+        top_right = copy.deepcopy(desk)
+        bottom_left = copy.deepcopy(desk)
+        bottom_right = copy.deepcopy(desk)
+        result = []
+
+        if (j < 6 and i > 1 and (top_left[i - 1][j + 1] == -1 or top_left[i - 1][j + 1] == -2) and top_left[i - 2][j + 2] == 0 and top_left[i][j] == 2):
+            top_left[i][j] = 0
+            top_left[i - 1][j + 1] = 0
+            top_left[i - 2][j + 2] = 2           
                 
-            desk1 = self.checkBlackFoodQueen(desk1, i - 2, j + 2)
+            nextTopLeftStep = self.checkBlackFoodQueen(top_left, i - 2, j + 2, True)
+            if (nextTopLeftStep):
+                top_left = nextTopLeftStep
 
-        if (j > 1 and i > 1 and (desk1[i - 1][j - 1] == -1 or desk1[i - 1][j - 1] == -2) and desk1[i - 2][j - 2] == 0 and desk1[i][j] == 2):
-            desk1[i][j] = 0
-            desk1[i - 1][j - 1] = 0
-            desk1[i - 2][j - 2] = 2              
+        if (j > 1 and i > 1 and (top_right[i - 1][j - 1] == -1 or top_right[i - 1][j - 1] == -2) and top_right[i - 2][j - 2] == 0 and top_right[i][j] == 2):
+            top_right[i][j] = 0
+            top_right[i - 1][j - 1] = 0
+            top_right[i - 2][j - 2] = 2        
+
+            nextTopRightStep = self.checkBlackFoodQueen(top_right, i - 2, j - 2, True)
+            if (nextTopRightStep):
+                top_right = nextTopRightStep            
+
+        if (j < 6 and i < 6 and (bottom_left[i + 1][j + 1] == -1 or bottom_left[i + 1][j + 1] == -2) and bottom_left[i + 2][j + 2] == 0 and bottom_left[i][j] == 2):
+            bottom_left[i][j] = 0
+            bottom_left[i + 1][j + 1] = 0
+            bottom_left[i + 2][j + 2] = 2
             
-            desk1 = self.checkBlackFoodQueen(desk1, i - 2, j - 2)
+            nextBottomLeftStep = self.checkBlackFoodQueen(bottom_left, i + 2, j + 2, True)
+            if (nextBottomLeftStep):
+                bottom_left = nextBottomLeftStep
 
-        if (j < 6 and i < 6 and (desk1[i + 1][j + 1] == -1 or desk1[i + 1][j + 1] == -2) and desk1[i + 2][j + 2] == 0 and desk1[i][j] == 2):
-            desk1[i][j] = 0
-            desk1[i + 1][j + 1] = 0
-            desk1[i + 2][j + 2] = 2
-            
-            desk1 = self.checkBlackFoodQueen(desk1, i + 2, j + 2)
-
-        if (j > 1 and i < 6 and (desk1[i + 1][j - 1] == -1 or desk1[i + 1][j - 1] == -2) and desk1[i + 2][j - 2] == 0 and desk1[i][j] == 2):
-            desk1[i][j] = 0
-            desk1[i + 1][j - 1] = 0
-            desk1[i + 2][j - 2] = 2         
+        if (j > 1 and i < 6 and (bottom_right[i + 1][j - 1] == -1 or bottom_right[i + 1][j - 1] == -2) and bottom_right[i + 2][j - 2] == 0 and bottom_right[i][j] == 2):
+            bottom_right[i][j] = 0
+            bottom_right[i + 1][j - 1] = 0
+            bottom_right[i + 2][j - 2] = 2           
            
-            desk1 = self.checkBlackFoodQueen(desk1, i + 2, j - 2)
+            nextBottomRightStep = self.checkBlackFoodQueen(bottom_right, i + 2, j - 2, True)
+            if (nextBottomRightStep):
+                bottom_right = nextBottomRightStep
 
-        return desk1 
+        if (top_left != desk and top_left):
+            if (flag):
+                result.extend(top_left)
+            else:
+                result.append(top_left)  
+        if (top_right != desk and top_right):
+            if (flag):
+                result.extend(top_right)
+            else:
+                result.append(top_right)
+        if (bottom_left != desk and bottom_left):
+            if (flag):
+                result.extend(bottom_left)
+            else:
+                result.append(bottom_left)
+        if (bottom_right != desk and bottom_right):
+            if (flag):
+                result.extend(bottom_right)
+            else:
+                result.append(bottom_right)                                
 
-    def checkWhiteFoodQueen(self, desk, i, j):
-        desk1 = copy.deepcopy(desk)
+        return result 
 
-        if (j < 6 and i > 1 and (desk1[i - 1][j + 1] == -1 or desk1[i - 1][j + 1] == -2) and desk1[i - 2][j + 2] == 0 and desk1[i][j] == 2):
-            desk1[i][j] = 0
-            desk1[i - 1][j + 1] = 0
-            desk1[i - 2][j + 2] = 2           
+    def checkWhiteFoodQueen(self, desk, i, j, flag = False):
+        top_left = copy.deepcopy(desk)
+        top_right = copy.deepcopy(desk)
+        bottom_left = copy.deepcopy(desk)
+        bottom_right = copy.deepcopy(desk)
+        result = []
+
+        if (j < 6 and i > 1 and (top_left[i - 1][j + 1] == -1 or top_left[i - 1][j + 1] == -2) and top_left[i - 2][j + 2] == 0 and top_left[i][j] == 2):
+            top_left[i][j] = 0
+            top_left[i - 1][j + 1] = 0
+            top_left[i - 2][j + 2] = 2           
                 
-            desk1 = self.checkWhiteFoodQueen(desk1, i - 2, j + 2)
+            nextTopLeftStep = self.checkWhiteFoodQueen(top_left, i - 2, j + 2, True)
+            if (nextTopLeftStep):
+                top_left = nextTopLeftStep
 
-        if (j > 1 and i > 1 and (desk1[i - 1][j - 1] == -1 or desk1[i - 1][j - 1] == -2) and desk1[i - 2][j - 2] == 0 and desk1[i][j] == 2):
-            desk1[i][j] = 0
-            desk1[i - 1][j - 1] = 0
-            desk1[i - 2][j - 2] = 2            
+        if (j > 1 and i > 1 and (top_right[i - 1][j - 1] == -1 or top_right[i - 1][j - 1] == -2) and top_right[i - 2][j - 2] == 0 and top_right[i][j] == 2):
+            top_right[i][j] = 0
+            top_right[i - 1][j - 1] = 0
+            top_right[i - 2][j - 2] = 2        
+
+            nextTopRightStep = self.checkWhiteFoodQueen(top_right, i - 2, j - 2, True)
+            if (nextTopRightStep):
+                top_right = nextTopRightStep            
+
+        if (j < 6 and i < 6 and (bottom_left[i + 1][j + 1] == -1 or bottom_left[i + 1][j + 1] == -2) and bottom_left[i + 2][j + 2] == 0 and bottom_left[i][j] == 2):
+            bottom_left[i][j] = 0
+            bottom_left[i + 1][j + 1] = 0
+            bottom_left[i + 2][j + 2] = 2
             
-            desk1 = self.checkWhiteFoodQueen(desk1, i - 2, j - 2)
+            nextBottomLeftStep = self.checkWhiteFoodQueen(bottom_left, i + 2, j + 2, True)
+            if (nextBottomLeftStep):
+                bottom_left = nextBottomLeftStep
 
-        if (j < 6 and i < 6 and (desk1[i + 1][j + 1] == -1 or desk1[i + 1][j + 1] == -2) and desk1[i + 2][j + 2] == 0 and desk1[i][j] == 2):
-            desk1[i][j] = 0
-            desk1[i + 1][j + 1] = 0
-            desk1[i + 2][j + 2] = 2
-            
-            desk1 = self.checkWhiteFoodQueen(desk1, i + 2, j + 2)
-
-        if (j > 1 and i < 6 and (desk1[i + 1][j - 1] == -1 or desk1[i + 1][j - 1] == -2) and desk1[i + 2][j - 2] == 0 and desk1[i][j] == 2):
-            desk1[i][j] = 0
-            desk1[i + 1][j - 1] = 0
-            desk1[i + 2][j - 2] = 2           
+        if (j > 1 and i < 6 and (bottom_right[i + 1][j - 1] == -1 or bottom_right[i + 1][j - 1] == -2) and bottom_right[i + 2][j - 2] == 0 and bottom_right[i][j] == 2):
+            bottom_right[i][j] = 0
+            bottom_right[i + 1][j - 1] = 0
+            bottom_right[i + 2][j - 2] = 2           
            
-            desk1 = self.checkWhiteFoodQueen(desk1, i + 2, j - 2)
+            nextBottomRightStep = self.checkWhiteFoodQueen(bottom_right, i + 2, j - 2, True)
+            if (nextBottomRightStep):
+                bottom_right = nextBottomRightStep
 
-        return desk1   
+        if (top_left != desk and top_left):
+            if (flag):
+                result.extend(top_left)
+            else:
+                result.append(top_left)  
+        if (top_right != desk and top_right):
+            if (flag):
+                result.extend(top_right)
+            else:
+                result.append(top_right)
+        if (bottom_left != desk and bottom_left):
+            if (flag):
+                result.extend(bottom_left)
+            else:
+                result.append(bottom_left)
+        if (bottom_right != desk and bottom_right):
+            if (flag):
+                result.extend(bottom_right)
+            else:
+                result.append(bottom_right)                                
+
+        return result   
 
     def prepareDvumerium(self, desk):
         return [desk[i:i+8] for i in range(0, len(desk), 8)]
-
-    def estimation(self, desk2, flag):
-        hren = []
-
-        for i in desk2:
-            hren.append(self.GetExit([-x for x in i]))
-
-        if (flag):
-            return desk2[hren.index(max(hren))]  
-
-        return desk2[hren.index(min(hren))]           
-
-    def stepIntoFour(self, desk2, count):
-        steps = []
-        hren = []
-        
-        step2 = self.step(self.prepareDvumerium([-x for x in desk2]), count + 3)
-
-        steps.append(self.estimation(i, 0))
-
-        for i in steps:
-            hren.append(self.GetExit([-x for x in i]))
-
-        return step2[hren.index(min(hren))]
-
-    def stepIntoThree(self, desk2, count):
-        steps = []
-        hren = []
-        
-        step2 = self.step(self.prepareDvumerium([-x for x in desk2]), count + 2)
-
-        for i in step2:
-            steps.append(self.stepIntoFour(i, count))
-
-        for i in steps:
-            hren.append(self.GetExit([-x for x in i]))
-
-        return step2[hren.index(max(hren))]
-
-    def stepIntoTwo(self, desk2, count):
-        steps = []
-        hren = []
-        
-        step2 = self.step(self.prepareDvumerium([-x for x in desk2]), count + 1)
-
-        for i in step2:
-            steps.append(self.stepIntoThree(i, count))
-
-        for i in steps:
-            hren.append(self.GetExit([-x for x in i]))
-
-        return step2[hren.index(min(hren))]
 
     def checkWin(self, desk):
         minus_one_found = True
@@ -271,56 +320,102 @@ class Perceptron:
         return minus_one_found ^ one_found
 
     def makePredicted(self, desk2, count, de = []):
+        allGetExit = []
         maxStepsTwo = []
         maxStepsThree = []
+        maxStepsFour = []
+        maxStepsFive = []
         allGetExit3 = []
+        maxGetExit2 = []
+        maxGetExit3 = []
+        maxGetExit1 = -10000
+        number_i = 0
         step2 = []
         step3 = []
-        hre = []
-        try:
-            for k in desk2:
-                hre.append(self.GetExit(k))
+        step4 = []
+        step5 = []
 
-            for i in desk2:
-                step = self.step(self.prepareDvumerium([-x for x in i]), count + 1)  
-                if (not step):
-                    step2.append([[0] * 64])
-                else:    
-                    step2.append(step)
 
-            for i in step2:
-                hren = []
-                for j in i:
-                    if (all(element == 0 for element in j)):
-                        hren.append(0)
-                    else:                        
-                        hren.append(self.GetExit(j))
-                maxStepsTwo.append(i[hren.index(max(hren))])
+        for i in desk2:
+            allGetExit.append(self.GetExit(i))
 
-            for i in maxStepsTwo:
-                step = self.step(self.prepareDvumerium([-x for x in i]), count + 2)  
-                if (not step):
-                    step3.append([[0] * 64])
-                else:    
-                    step3.append(step)    
+        for i in desk2:
+            step = self.step(self.prepareDvumerium([-x for x in i]), count + 1)  
+            if (not step):
+                step2.append([[0] * 64])
+            else:    
+                step2.append(step)
 
-            for i in step3:
-                hren = []
-                for j in i:
-                    if (all(element == 0 for element in j)):
-                        hren.append(1)
-                    else:                        
-                        hren.append(self.GetExit(j))
-                maxStepsThree.append(i[hren.index(max(hren))])                                
+        for i in step2:
+            hren = []
+            for j in i:
+                if (all(element == 0 for element in j)):
+                    hren.append(0)
+                else:      
+                    if (len(j) > 64):
+                        pass                  
+                    hren.append(self.GetExit(j))
+            maxStepsTwo.append(i[hren.index(max(hren))])
 
-            for i in maxStepsThree:
-                allGetExit3.append(self.GetExit(i))
-            
-            return desk2[allGetExit3.index(max(allGetExit3))]
 
-        except:
-            return 1   
+        for i in maxStepsTwo:
+            step = self.step(self.prepareDvumerium([-x for x in i]), count + 2)  
+            if (not step):
+                step3.append([[0] * 64])
+            else:    
+                step3.append(step)  
+                    
+        for i in step3:
+            hren = []
+            for j in i:
+                if (all(element == 0 for element in j)):
+                    hren.append(0)
+                else:                        
+                    if (len(j) > 64):
+                        pass
+                    hren.append(self.GetExit(j))
+            maxStepsThree.append(i[hren.index(max(hren))])
 
+
+            # for i in maxStepsThree:
+            #     step = self.step(self.prepareDvumerium([-x for x in i]), count + 3)  
+            #     if (not step):
+            #         step4.append([[0] * 64])
+            #     else:    
+            #         step4.append(step)  
+
+
+            # for i in step4:
+            #     hren = []
+            #     for j in i:
+            #         if (all(element == 0 for element in j)):
+            #             hren.append(0)
+            #         else:                        
+            #             hren.append(self.GetExit(j))
+            #     maxStepsFour.append(i[hren.index(max(hren))])
+
+
+            # for i in maxStepsFour:
+            #     step = self.step(self.prepareDvumerium([-x for x in i]), count + 4)  
+            #     if (not step):
+            #         step5.append([[0] * 64])
+            #     else:    
+            #         step5.append(step)                      
+
+            # for i in step5:
+            #     hren = []
+            #     for j in i:
+            #         if (all(element == 0 for element in j)):
+            #             hren.append(0)
+            #         else:                        
+            #             hren.append(self.GetExit(j))
+            #     maxStepsFive.append(i[hren.index(max(hren))])
+                           
+
+        for i in maxStepsThree:
+            allGetExit3.append(self.GetExit(i))
+        
+        return desk2[allGetExit3.index(max(allGetExit3))]
 
     def step(self, desk, count):
         max = -100
@@ -334,11 +429,21 @@ class Perceptron:
                     if (desk_temp[i][j] == 1):
                         try:
                             desk_temp1 = self.checkWhiteFood(desk_temp, i, j)
-                            if (desk_temp1 != desk_temp):
+                            if (desk_temp1):
                                 max_desk = []
-                                max_desk.append(self.prepareData(desk_temp1))
+                                for p in desk_temp1:                                
+                                    max_desk.append(self.prepareData(p))
+
+                                result_eat = []
+
+                                for l in max_desk:
+                                    if (len(l) > 64):
+                                        split_arrays = [l[z:z+64] for z in range(0, len(l), 64)]
+                                        result_eat.extend(split_arrays)
+                                    else:
+                                        result_eat.append(l)                                      
                                 
-                                return max_desk
+                                return result_eat 
 
                             if (j < 7 and i < 7 and desk[i + 1][j + 1] == 0 and desk[i][j] == 1):
                                 desk_temp[i][j] = 0
@@ -365,11 +470,21 @@ class Perceptron:
                     elif (desk_temp[i][j] == 2):
                         try:
                             desk_temp1 = self.checkWhiteFoodQueen(desk_temp, i, j)
-
-                            if (desk_temp1 != desk_temp):
+                            if (desk_temp1):
                                 max_desk = []
-                                max_desk.append(self.prepareData(desk_temp1))
-                                return max_desk
+                                for p in desk_temp1:                                
+                                    max_desk.append(self.prepareData(p))
+
+                                result_eat = [] 
+
+                                for l in max_desk:
+                                    if (len(l) > 64):
+                                        split_arrays = [l[z:z+64] for z in range(0, len(l), 64)]
+                                        result_eat.extend(split_arrays)
+                                    else:
+                                        result_eat.append(l)                                      
+                                
+                                return result_eat
 
                             if (j < 7 and i < 7 and desk[i + 1][j + 1] == 0 and desk[i][j] == 2):
                                 desk_temp[i][j] = 0
@@ -401,11 +516,21 @@ class Perceptron:
                     if (desk_temp[i][j] == 1):
                         try:
                             desk_temp1 = self.checkBlackFood(desk_temp, i, j)
-
-                            if (desk_temp1 != desk_temp):
+                            if (desk_temp1):
                                 max_desk = []
-                                max_desk.append(self.prepareData(desk_temp1))
-                                return max_desk
+                                for p in desk_temp1:                                
+                                    max_desk.append(self.prepareData(p))
+
+                                result_eat = [] 
+
+                                for l in max_desk:
+                                    if (len(l) > 64):
+                                        split_arrays = [l[z:z+64] for z in range(0, len(l), 64)]
+                                        result_eat.extend(split_arrays)
+                                    else:
+                                        result_eat.append(l)                                      
+                                
+                                return result_eat 
 
                             if (j < 7 and i > 0 and desk[i - 1][j + 1] == 0 and desk[i][j] == 1):
                                 desk_temp[i][j] = 0
@@ -431,11 +556,21 @@ class Perceptron:
                     elif (desk_temp[i][j] == 2):
                         try:
                             desk_temp1 = self.checkBlackFoodQueen(desk_temp, i, j)
-
-                            if (desk_temp1 != desk_temp):
+                            if (desk_temp1):
                                 max_desk = []
-                                max_desk.append(self.prepareData(desk_temp1))
-                                return max_desk
+                                for p in desk_temp1:                                
+                                    max_desk.append(self.prepareData(p))
+
+                                result_eat = [] 
+
+                                for l in max_desk:
+                                    if (len(l) > 64):
+                                        split_arrays = [l[z:z+64] for z in range(0, len(l), 64)]
+                                        result_eat.extend(split_arrays)
+                                    else:
+                                        result_eat.append(l)                                      
+                                
+                                return result_eat
 
                             if (j < 7 and i < 7 and desk[i + 1][j + 1] == 0 and desk[i][j] == 2):
                                 desk_temp[i][j] = 0

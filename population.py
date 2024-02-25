@@ -3,7 +3,7 @@ import random as rnd
 
 class Population:
     def __init__(self):
-        self.size = 40
+        self.size = 30
         self.half_size = int(self.size/2)
         self.mutate = 0.05
         self.person = []
@@ -27,7 +27,7 @@ class Population:
         return minus_one_found ^ one_found
 
 
-    def Game(self, white : Perceptron, black : Perceptron):
+    def Game(self, white, black):
         desk = [[0 for j in range(8)] for i in range(8)]
         self.count = 1
 
@@ -47,56 +47,84 @@ class Population:
 
 
         victory = False
-
+        
         while not victory:
-            try:   
-                if (self.count > 70):                  
-                    white.score -= 2
-                    black.score -= 2       
-                    break   
+                if (self.count > 75):  
+                    white.score -= 1
+                    black.score -= 1                       
+                    break      
 
                 step = white.step(desk, self.count)
 
                 if (self.checkWin(desk)):
                     white.score += 1
-                    black.score -= 1
+                    black.score -= 2
+                    break
+
+                if (len(step) == 0):
+                    white.score -= 1
                     break
 
                 desk = white.makePredicted(step, self.count, white.prepareDvumerium(desk))
                 desk = white.prepareDvumerium(desk)
 
+
                 if (self.checkWin(desk)):
                     white.score += 1
-                    black.score -= 1
+                    black.score -= 2
                     break
 
-                self.count += 1                
+                self.count += 1     
 
-                
+                # desk = [
+                #     [0, 0, 0, 0, 0, 0, 0, 0],
+                #     [-2, 0, 0, 0, 0, 0, 0, 0],
+                #     [0, 1, 0, 2, 0, 0, 0, 0],
+                #     [-1, 0, 0, 0, 0, 0, 0, 0],
+                #     [0, 0, 0, 0, 0, 0, 0, 0],
+                #     [0, 0, 0, 0, 0, 0, 0, 0],
+                #     [0, 0, 0, 0, 0, 0, 0, 0],
+                #     [0, 0, 0, 0, 0, 0, 0, 0]
+                # ] 
+
+
+                # desk = [
+                #     [0, 0, 0, -1, 0, 0, 0, -1],
+                #     [1, 0, 0, 0, -1, 0, 0, 0],
+                #     [0, 0, 0, -1, 0, -1, 0, -1],
+                #     [0, 0, 0, 0, 1, 0, 0, 0],
+                #     [0, -1, 0, 1, 0, 0, 0, 1],
+                #     [0, 0, 0, 0, 1, 0, 1, 0],
+                #     [0, 1, 0, 0, 0, 1, 0, 0],
+                #     [1, 0, 1, 0, 0, 0, 0, 0]
+                # ]  
+
+
                 desk = [[-x for x in row] for row in desk]
 
-                step = black.step(desk, self.count)
+                step = black.step(desk, self.count)          
 
                 if (self.checkWin(desk)):
-                    white.score -= 1
+                    white.score -= 2
                     black.score += 1
                     break
+
+                if (len(step) == 0):
+                    black.score -= 1
+                    break                   
 
                 desk = black.makePredicted(step, self.count, black.prepareDvumerium(desk))
                 desk = black.prepareDvumerium(desk)
 
                 if (self.checkWin(desk)):
-                    white.score -= 1
+                    white.score -= 2
                     black.score += 1
                     break  
 
                 desk = [[-x for x in row] for row in desk]
 
-                self.count += 1
-            except:
-                white.score -= 1
-                black.score -= 1
-                break
+                self.count += 1   
+
    
     def Selection(self):
         temp_person = []
@@ -105,11 +133,11 @@ class Population:
             i.score = 0.0
 
         for i in range(self.size):
-            for j in range(2):
+            for j in range(5):
                 rand = int(random.uniform(0, self.size))
                 while (i == rand):
                     rand = int(random.uniform(0, self.size))
-                self.Game(self.person[i], self.person[j])
+                self.Game(self.person[i], self.person[rand])
 
         for i in self.person:
             temp_person.append(i)
